@@ -5,14 +5,13 @@
 package Conexion;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.Statement;
-import java.sql.ResultSet;
 /**
  *
  * @author ChaconReyes
  */
 public class Conexion {
     Connection con;
+    
     public Conexion() {
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -20,7 +19,13 @@ public class Conexion {
         }catch(Exception e){
             System.err.println("Error"+e);
          }
+        } 
+        
+        public Connection getConnection() {
+            return con;
+              } 
 }
+    /*
   public static void main(String[] args) {
         // TODO code application logic here
         Conexion cn= new Conexion();
@@ -32,7 +37,9 @@ public class Conexion {
         while(rs.next()){
             System.out.println(rs.getInt("id")+" "+rs.getString("nombre"));
          }   
-    }catch(Exception e){
+        }catch(Exception e){
          }
+
+
          }
-}
+*/

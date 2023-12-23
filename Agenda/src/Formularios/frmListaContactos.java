@@ -8,14 +8,52 @@ package Formularios;
  *
  * @author ChaconReyes
  */
+import Conexion.Conexion;
+import java.sql.*;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 public class frmListaContactos extends javax.swing.JFrame {
 
     /**
      * Creates new form frmListaContactos
      */
+    Conexion cn=new Conexion();
+    Connection con;
+    DefaultTableModel model;
+    Statement st;
+    ResultSet rs;
+    int id=0;
+    
+                
     public frmListaContactos() {
         initComponents();
+        Listar();
     }
+    void Listar(){
+        String sql="SELECT * FROM contactos";
+        try{
+            con = cn.getConnection();
+            st= con.createStatement();
+            rs=st.executeQuery(sql);
+            Object[] contactos =new Object[7];
+            model = (DefaultTableModel)jtlContactos.getModel();
+            
+             while(rs.next()){
+            contactos[0]=rs.getInt("id");
+            contactos[1]=rs.getString("nombre");
+            contactos[2]=rs.getString("p_apellido");
+            contactos[3]=rs.getString("s_apellido");
+            contactos[4]=rs.getString("telefono");
+            contactos[5]=rs.getString("correo");           
+            contactos[6]=rs.getString("Provincia");  
+            model.addRow(contactos);
+         }   
+             jtlContactos.setModel(model);
+            }
+        catch(Exception e){
+            }
+        }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -26,21 +64,115 @@ public class frmListaContactos extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        lListaDeContactos = new javax.swing.JLabel();
+        btnNuevo = new javax.swing.JButton();
+        btnModificar = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jtlContactos = new javax.swing.JTable();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        lListaDeContactos.setText("Lista de Contactos");
+
+        btnNuevo.setText("Nuevo");
+        btnNuevo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNuevoActionPerformed(evt);
+            }
+        });
+
+        btnModificar.setText("Modificar");
+        btnModificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnModificarActionPerformed(evt);
+            }
+        });
+
+        jtlContactos.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "id", "nombre", "p_apellido", "s_apellido", "telefono", "correo", "Provincia"
+            }
+        ));
+        jtlContactos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jtlContactosMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(jtlContactos);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(26, 26, 26)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 485, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnNuevo)
+                        .addGap(34, 34, 34)
+                        .addComponent(btnModificar))
+                    .addComponent(lListaDeContactos, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(28, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(21, 21, 21)
+                .addComponent(lListaDeContactos)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnNuevo)
+                    .addComponent(btnModificar))
+                .addGap(42, 42, 42)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(47, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
+        // TODO add your handling code here:
+        frmCrearContactos crear=new frmCrearContactos();
+        crear.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_btnNuevoActionPerformed
+
+    private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
+        // TODO add your handling code here:
+        if(id==0){
+            int row=jtlContactos.getSelectedRow();
+        if(row==-1){
+            JOptionPane.showMessageDialog(null,"No hay registro seleccionado");
+        }else{
+        id=Integer.parseInt((String)jtlContactos.getValueAt(row,0).toString());
+        }}else{
+        frmModificaContactos modificar= new frmModificaContactos(id);
+       // modificar.id=this.id;
+        modificar.setVisible(true);
+        this.setVisible(false);
+        }
+        
+        
+        
+    }//GEN-LAST:event_btnModificarActionPerformed
+
+    private void jtlContactosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jtlContactosMouseClicked
+        // TODO add your handling code here:
+        int row=jtlContactos.getSelectedRow();
+        int id;
+        if(row==-1){
+            JOptionPane.showMessageDialog(null,"No hay registro seleccionado");
+        }else{
+        id=Integer.parseInt((String)jtlContactos.getValueAt(row,0).toString());
+        }
+        
+        
+    }//GEN-LAST:event_jtlContactosMouseClicked
 
     /**
      * @param args the command line arguments
@@ -78,5 +210,10 @@ public class frmListaContactos extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnModificar;
+    private javax.swing.JButton btnNuevo;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jtlContactos;
+    private javax.swing.JLabel lListaDeContactos;
     // End of variables declaration//GEN-END:variables
 }
